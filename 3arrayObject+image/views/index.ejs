@@ -1,0 +1,112 @@
+<%- include('nav') %>
+ 
+
+  <body>
+    <script>
+
+
+
+      $(function () {
+        $('.imageOpen a').simpleLightbox();
+      });
+
+    </script>
+    <script>
+      function areYouSureEdit(id) {
+        // alert(id)
+        Swal.fire({
+          title: "Are you sure want to delete this record?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#ACC646",
+          cancelButtonColor: "#CBCEC9",
+          confirmButtonText: "CONFIRM",
+          cancelButtonText: "CANCEL",
+          toast: true,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            window.location = id;
+          } else if (result.isDenied) {
+            return;
+          }
+        });
+      }
+    </script>
+    <% if(message){ %>
+      <script>
+        Swal.fire({
+          toast: true,
+          position: "bottom-end",
+          icon: "<%= message.type %>",
+          title: "<%= message.message %>",
+          showConfirmButton: false,
+          timer: 4000,
+        });
+      </script>
+      <% } %>
+        <table class="table align-middle dt-responsive nowrap py-3" style="width: 100%" id="usertable">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">descripton</th>
+              <th scope="col">Image</th>
+              <th scope="col">Attribute</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach((row,index)=> { %>
+              <tr>
+                <th scope="row">
+                  <%= index+1 %>
+                </th>
+                <td>
+                  <%= row.name %>
+                </td>
+                <td>
+                  <%= row.description %>
+                </td>
+                <td class="imageOpen">
+                  <a href="<%=row.image %>"><img src="<%=row.image %>" width="60" alt="row.image"
+                      class="img-thumbnail" /></a>
+                </td>
+                <td>
+                  <% const attr=row.attributes 
+                  for (const key in attr) { %>
+                    <table class="table align-middle dt-responsive nowrap py-3" style="width: 100%">
+                      <tr>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Slug</th>
+                      </tr>
+                      <tr>
+                        <td>
+                          <%= attr[key].price %>
+                        </td>
+                        <td>
+                          <%= attr[key].qty %>
+                        </td>
+                        <td>
+                          <%= attr[key].slug %>
+                        </td>
+                      </tr>
+                    </table>
+                    <br />
+                    <% } %>
+                </td>
+                <td>
+                  <a href="/edit/<%= row._id %> ">
+                    <i class="fa-regular fa-pen-to-square mx-2 text-success"></i></a>
+                  <a onclick="areYouSureEdit('/delete/<%= row._id %> ')">
+                    <i class="fa-regular fa-trash-can mx-2 text-danger"></i></a>
+                </td>
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+      
+  </body>
+
+  </html>

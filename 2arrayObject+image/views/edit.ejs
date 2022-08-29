@@ -1,0 +1,108 @@
+<%- include('nav') %>
+
+    <body>
+        <% if(message){ %>
+            <script>
+              Swal.fire({
+                toast: true,
+                position: "bottom-end",
+                icon: "<%= message.type %>",
+                title: "<%= message.message %>",
+                showConfirmButton: false,
+                timer: 4000,
+              });
+            </script>
+            <% } %>
+        <script>
+            function remove_more(id) {
+                alertify.confirm('One Point ', 'Are you sure want to delete !', function () {
+                    $('#box' + id).fadeOut(600, function () {
+                        $('#box' + id).remove();
+                    });
+                }, function () {
+                    alertify.error('Cancel')
+                });
+            }
+        </script>
+        <script>
+            function areYouSureEdit(id) {
+                // alert(id)
+                Swal.fire({
+                    title: "Are you sure want to delete this record?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#ACC646",
+                    cancelButtonColor: "#CBCEC9",
+                    confirmButtonText: "CONFIRM",
+                    cancelButtonText: "CANCEL",
+                    toast: true,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.location = id;
+                    } else if (result.isDenied) {
+                        return;
+                    }
+                });
+            }
+        </script>
+        <div class="container my-5">
+            <form method="post" action="/update/<%= product._id  %>" enctype="multipart/form-data">
+                <input type="text" name="name" id="" value="<%= product.name  %>" placeholder="Name">
+                <input type="text" name="description" id="" value="<%= product.description  %>" placeholder="Description">
+
+                <input type="file" name="img" id="img" onchange="loadFile(event)"  class="form-control">
+                <p><img id="output" width="200" class="my-2" /></p>
+                
+                <img src="<%= product.img  %>" width="80" class="img-thumbnail" id="old_image" >
+                <input type="hidden" name="old_image" value="<%= product.img  %>">
+
+                <% const attr=product.attributes 
+                for (const key in attr) { %>
+                    <div id="attributeBox" class="mb-3">
+                        <div class="form-group row">
+                            <div class="col-sm-5">
+                                <label for="price" class="col-sm-3 control-label col-form-label">Price</label>
+                                <input type="text" class="form-control" name="price[]" value="<%= attr[key].price %>"
+                                    id="price">
+                            </div>
+                            <div class="col-sm-5">
+                                <label for="qty" class="col-sm-3 control-label col-form-label">Qty</label>
+                                <input type="text" class="form-control" name="qty[]" value="<%= attr[key].qty %>"
+                                    id="qty">
+                            </div>
+
+                            <div class="col-sm-2 mt-4 d-flex-align-item-center ">
+                                <button type="button"
+                                    onclick="areYouSureEdit('/delete/<%= product._id  %>/<%= attr[key]._id %>')"
+                                    id="deleteattr" class="btn btn-danger btn-sm"><i class="fa fa-minus"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <% } %>
+                        <div id="newattributeBox"></div>
+                        <div class="col-sm-2 mt-4 d-flex-align-item-center ">
+                            <button type="button" id="Addattribute" class="btn btn-warning btn-sm"><i
+                                    class="fa fa-plus"></i></button>
+                        </div>
+
+                        <input type="hidden" id="numattribute" value="1">
+                        <input type="submit" value="Submit">
+            </form>
+        </div>
+        <script>
+            $('#Addattribute').click(function (e) {
+                e.preventDefault();
+                var numattribute = jQuery('#numattribute').val();
+                numattribute++;
+                jQuery('#numattribute').val(numattribute);
+                var html1 = '<div id="box' + numattribute + '"><div class="form-group row"><div class="col-sm-5"><label for="price" class="col-sm-3 control-label col-form-label">Price</label><input type="text" class="form-control" name="price[]" id="price" required></div><div class="col-sm-5"><label for="qty" class="col-sm-3 control-label col-form-label">Qty</label><input type="text" required class="form-control" name="qty[]" id="qty"></div><div class="col-sm-2 mt-4 d-flex-align-item-center "><button type="button" id="Addattribute" class="btn btn-danger btn-sm float-right" onclick="remove_more(' + numattribute + ')"><i class="fa fa-trash"></i></button></div></div></div>'
+                jQuery('#newattributeBox').append(html1);
+
+            });
+        </script>
+
+    </body>
+
+    </html>

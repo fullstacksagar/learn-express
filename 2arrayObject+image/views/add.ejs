@@ -1,0 +1,60 @@
+<%- include('nav') %>
+  <body>
+    <script>
+      function remove_more(id) {
+        alertify.confirm('One Point ', 'Are you sure want to delete !', function () {
+          $('#box' + id).fadeOut(600, function () {
+            $('#box' + id).remove();
+          });
+        }, function () {
+          alertify.error('Cancel')
+        });
+      }
+    </script>
+    <div class="container my-5">
+      <form action="/add" method="post" enctype="multipart/form-data">
+        <input type="text" name="name" id="" placeholder="Name">
+        <input type="text" name="description" id="" placeholder="Description">
+        <input type="file" name="image" id="image" onchange="loadFile(event)" class="form-control" />
+        <p><img id="output" width="200" /></p>
+        <div id="attributeBox" class="mb-3">
+          <div class="form-group row">
+            <div class="col-sm-5">
+              <label for="price" class="col-sm-3 control-label col-form-label">Price</label>
+              <input type="text" class="form-control" name="price[]" id="price">
+            </div>
+            <div class="col-sm-5">
+              <label for="qty" class="col-sm-3 control-label col-form-label">Qty</label>
+              <input type="text" class="form-control" name="qty[]" id="qty">
+            </div>
+
+            <div class="col-sm-2 mt-4 d-flex-align-item-center ">
+              <button type="button" id="Addattribute" class="btn btn-warning btn-sm"><i class="fa fa-plus"></i></button>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="numattribute" value="1">
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+    <script>
+      $('#Addattribute').click(function (e) {
+        e.preventDefault();
+        var numattribute = jQuery('#numattribute').val();
+        numattribute++;
+        jQuery('#numattribute').val(numattribute);
+        var html1 = '<div id="box' + numattribute + '"><div class="form-group row"><div class="col-sm-5"><label for="price" class="col-sm-3 control-label col-form-label">Price</label><input type="text" class="form-control" name="price[]" id="price" required></div><div class="col-sm-5"><label for="qty" class="col-sm-3 control-label col-form-label">Qty</label><input type="text" required class="form-control" name="qty[]" id="qty"></div><div class="col-sm-2 mt-4 d-flex-align-item-center "><button type="button" id="Addattribute" class="btn btn-danger btn-sm float-right" onclick="remove_more(' + numattribute + ')"><i class="fa fa-trash"></i></button></div></div></div>'
+        jQuery('#attributeBox').append(html1);
+      });
+    </script>
+
+    <script>
+      // image preview 
+      var loadFile = function (event) {
+        var image = document.getElementById('output');
+        image.src = URL.createObjectURL(event.target.files[0]);
+      };
+    </script>
+  </body>
+
+  </html>
